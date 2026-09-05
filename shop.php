@@ -10,10 +10,37 @@
 /* Shared catalogue + taxonomy — single source of truth for every product page */
 require_once __DIR__ . '/includes/products-data.php';
 
-/* Incoming category from the header nav pills — shop.php?category=banarasi */
-$active_category = isset($_GET['category']) ? strtolower(trim($_GET['category'])) : '';
-if (!array_key_exists($active_category, $shop_categories)) {
-    $active_category = '';
+/* --------------------------------------------------------------------------
+   Incoming filters from the mega menu and footer, e.g.
+   shop.php?category=banarasi&fabric=pure-silk&min=6000&max=12000&sort=newest
+   Each one is validated against the catalogue and pre-applied below, so the
+   sidebar, the slider and the sort select all open in the requested state.
+   -------------------------------------------------------------------------- */
+$rk_pick = function ($key, array $allowed) {
+    $raw = isset($_GET[$key]) ? strtolower(trim($_GET[$key])) : '';
+    if ($raw === '') {
+        return [];
+    }
+    $out = [];
+    foreach (explode(',', $raw) as $value) {
+        $value = trim($value);
+        if ($value !== '' && array_key_exists($value, $allowed) && !in_array($value, $out, true)) {
+            $out[] = $value;
+        }
+    }
+    return $out;
+};
+
+$active_categories = $rk_pick('category', $shop_categories);
+$active_fabrics    = $rk_pick('fabric', $shop_fabrics);
+
+/* Kept for the single-select markup already in the sidebar */
+$active_category = $active_categories ? $active_categories[0] : '';
+
+$allowed_sorts = ['default', 'price-asc', 'price-desc', 'newest', 'popularity'];
+$active_sort   = isset($_GET['sort']) ? strtolower(trim($_GET['sort'])) : 'default';
+if (!in_array($active_sort, $allowed_sorts, true)) {
+    $active_sort = 'default';
 }
 
 /* Facet counts for the sidebar */
@@ -29,29 +56,24 @@ $price_step  = 500;
 $price_floor = 0;
 $price_ceil  = (int) (ceil(max(array_column($shop_products, 'price_value')) / $price_step) * $price_step);
 
+/* Incoming price window, clamped to the slider's own bounds */
+$active_min = isset($_GET['min']) && is_numeric($_GET['min']) ? (int) $_GET['min'] : $price_floor;
+$active_max = isset($_GET['max']) && is_numeric($_GET['max']) ? (int) $_GET['max'] : $price_ceil;
+$active_min = max($price_floor, min($active_min, $price_ceil));
+$active_max = max($price_floor, min($active_max, $price_ceil));
+if ($active_min > $active_max) {
+    list($active_min, $active_max) = [$active_max, $active_min];
+}
+
 /* Page-scoped assets — hooks consumed by includes/header.php + includes/footer.php */
 $page_title = 'Sarees | RK Collection — Handwoven Heritage Silks';
-$page_css   = ['assets/css/page-header.css', 'assets/css/shop.css'];
+$page_css   = ['assets/css/shop.css'];
 $page_js    = ['assets/js/shop.js'];
 
 include 'includes/header.php';
 ?>
 
 <main class="site-main shop-page" id="shopPage">
-
-    <!-- ==========================================================
-         PAGE HEADER BAND
-         ========================================================== -->
-    <section class="shop-hero">
-        <p class="shop-hero__eyebrow">The Collection</p>
-        <h1 class="shop-hero__title">Sarees</h1>
-        <div class="shop-hero__rule" aria-hidden="true"></div>
-        <nav class="shop-hero__crumbs" aria-label="Breadcrumb">
-            <a class="shop-hero__crumb-link" href="index.php">Home</a>
-            <span class="shop-hero__crumb-sep" aria-hidden="true">/</span>
-            <span class="shop-hero__crumb shop-hero__crumb--current" aria-current="page">Sarees</span>
-        </nav>
-    </section>
 
     <!-- ==========================================================
          FILTERS + GRID
@@ -84,7 +106,7 @@ include 'includes/header.php';
                                            class="shop-filters__check-input"
                                            data-group="category"
                                            value="<?php echo htmlspecialchars($slug); ?>"
-                                           <?php echo ($active_category === $slug) ? 'checked' : ''; ?>>
+                                           <?php echo in_array($slug, $active_categories, true) ? 'checked' : ''; ?>>
                                     <span class="shop-filters__box" aria-hidden="true"></span>
                                     <span class="shop-filters__check-text"><?php echo htmlspecialchars($label); ?></span>
                                     <span class="shop-filters__count"><?php echo (int) $category_counts[$slug]; ?></span>
@@ -99,9 +121,9 @@ include 'includes/header.php';
                     <h3 class="shop-filters__group-title">Price</h3>
 
                     <div class="shop-filters__price-values">
-                        <span id="shopPriceOutMin">₹0</span>
+                        <span id="shopPriceOutMin">₹<?php echo number_format($active_min); ?></span>
                         <span class="shop-filters__price-dash" aria-hidden="true"></span>
-                        <span id="shopPriceOutMax">₹<?php echo number_format($price_ceil); ?></span>
+                        <span id="shopPriceOutMax">₹<?php echo number_format($active_max); ?></span>
                     </div>
 
                     <div class="shop-range">
@@ -114,7 +136,7 @@ include 'includes/header.php';
                                min="<?php echo (int) $price_floor; ?>"
                                max="<?php echo (int) $price_ceil; ?>"
                                step="<?php echo (int) $price_step; ?>"
-                               value="<?php echo (int) $price_floor; ?>"
+                               value="<?php echo (int) $active_min; ?>"
                                aria-label="Minimum price">
                         <input type="range"
                                class="shop-range__input"
@@ -122,7 +144,7 @@ include 'includes/header.php';
                                min="<?php echo (int) $price_floor; ?>"
                                max="<?php echo (int) $price_ceil; ?>"
                                step="<?php echo (int) $price_step; ?>"
-                               value="<?php echo (int) $price_ceil; ?>"
+                               value="<?php echo (int) $active_max; ?>"
                                aria-label="Maximum price">
                     </div>
 
@@ -139,7 +161,8 @@ include 'includes/header.php';
                                     <input type="checkbox"
                                            class="shop-filters__check-input"
                                            data-group="fabric"
-                                           value="<?php echo htmlspecialchars($slug); ?>">
+                                           value="<?php echo htmlspecialchars($slug); ?>"
+                                           <?php echo in_array($slug, $active_fabrics, true) ? 'checked' : ''; ?>>
                                     <span class="shop-filters__box" aria-hidden="true"></span>
                                     <span class="shop-filters__check-text"><?php echo htmlspecialchars($label); ?></span>
                                     <span class="shop-filters__count"><?php echo (int) $fabric_counts[$slug]; ?></span>
@@ -168,17 +191,18 @@ include 'includes/header.php';
                             <span>Filter</span>
                             <span class="shop-filter-toggle__count" id="shopFilterToggleCount" hidden>0</span>
                         </button>
-                        <p class="shop-toolbar__count" id="shopResultCount">Showing 1–12 of <?php echo count($shop_products); ?> sarees</p>
+                        <h1 class="visually-hidden">Sarees</h1>
+                    <p class="shop-toolbar__count" id="shopResultCount">Showing 1–12 of <?php echo count($shop_products); ?> sarees</p>
                     </div>
 
                     <div class="shop-sort">
                         <label class="shop-sort__label" for="shopSort">Sort by</label>
                         <select class="shop-sort__select" id="shopSort">
-                            <option value="default">Default Sorting</option>
-                            <option value="price-asc">Price — Low to High</option>
-                            <option value="price-desc">Price — High to Low</option>
-                            <option value="newest">Newest Arrivals</option>
-                            <option value="popularity">Popularity</option>
+                            <option value="default"<?php echo $active_sort === 'default' ? ' selected' : ''; ?>>Default Sorting</option>
+                            <option value="price-asc"<?php echo $active_sort === 'price-asc' ? ' selected' : ''; ?>>Price — Low to High</option>
+                            <option value="price-desc"<?php echo $active_sort === 'price-desc' ? ' selected' : ''; ?>>Price — High to Low</option>
+                            <option value="newest"<?php echo $active_sort === 'newest' ? ' selected' : ''; ?>>Newest Arrivals</option>
+                            <option value="popularity"<?php echo $active_sort === 'popularity' ? ' selected' : ''; ?>>Popularity</option>
                         </select>
                     </div>
                 </div>
@@ -226,12 +250,12 @@ include 'includes/header.php';
                                             </svg>
                                         </button>
 
-                                        <button type="button" class="product-card__cart-btn js-add-cart" aria-label="Add to Shopping Bag">
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                        <button type="button" class="product-card__cart-btn js-add-cart" aria-label="Add to Cart">
+                                            <svg class="product-card__cart-plus" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
                                             </svg>
+                                            <span>Add to Cart</span>
                                         </button>
                                     </div>
 

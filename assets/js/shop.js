@@ -466,6 +466,18 @@
         }
     });
 
+    /* The slider inputs are rendered with the incoming ?min= / ?max= window,
+       so the state has to start from them rather than from the bounds. */
+    state.priceMin = parseInt(els.rangeMin.value, 10);
+    state.priceMax = parseInt(els.rangeMax.value, 10);
+    if (isNaN(state.priceMin)) { state.priceMin = PRICE_FLOOR; }
+    if (isNaN(state.priceMax)) { state.priceMax = PRICE_CEIL; }
+    if (state.priceMin > state.priceMax) {
+        var swap = state.priceMin;
+        state.priceMin = state.priceMax;
+        state.priceMax = swap;
+    }
+
     state.sort = els.sort.value || 'default';
     syncRangeUI();
     render(false);

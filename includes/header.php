@@ -1,5 +1,7 @@
 <?php require_once __DIR__ . '/icons.php'; ?>
-<?php require_once __DIR__ . '/mega-menu-data.php'; ?>
+<?php /* Journal data: the footer and the homepage cards build article URLs from it */ ?>
+<?php require_once __DIR__ . '/blog-data.php'; ?>
+<?php require_once __DIR__ . '/mega-menu.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,19 +12,18 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Geist:wght@300..600&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Overpass:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Satisfy&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="assets/css/responsive.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="assets/css/core.css?v=<?php echo time(); ?>">
 <?php if (!empty($page_css)): foreach ((array) $page_css as $rk_css): ?>
     <link rel="stylesheet" href="<?php echo htmlspecialchars($rk_css); ?>?v=<?php echo time(); ?>">
 <?php endforeach; endif; ?>
 </head>
 <body>
-<?php require_once __DIR__ . '/mobile-drawer.php'; ?>
+<?php rk_render_mobile_drawer($mega_menus); ?>
 
 <header class="site-header" id="siteHeader">
 
@@ -60,25 +61,27 @@
                         <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
                 </button>
-                <a class="header-text-btn" href="#about" aria-label="About Us">ABOUT</a>
-                <a class="header-text-btn" href="#contact" aria-label="Contact Us">CONTACT</a>
+                <a class="header-text-btn" href="about" aria-label="About Us">ABOUT</a>
+                <a class="header-text-btn" href="contact" aria-label="Contact Us">CONTACT</a>
+                <a class="header-text-btn" href="blog" aria-label="The Journal">BLOG</a>
             </div>
 
-            <a class="header-logo-strip__brand" href="index.php" aria-label="RK Collection Home">
+            <a class="header-logo-strip__brand" href="index" aria-label="RK Collection Home">
                 <img class="header-logo-strip__logo" src="assets/images/logo/logo-rk.png" alt="RK Collection — Pure Silks & Heritage Sarees">
             </a>
 
+<?php $current_page = basename($_SERVER['SCRIPT_NAME']); ?>
             <div class="header-logo-strip__side header-logo-strip__side--right header-logo-strip__side--icons">
-                <a class="header-icon-btn header-icon-btn--search" href="#" aria-label="Search" title="Search">
+                <a class="header-icon-btn header-icon-btn--search <?php echo ($current_page === 'shop.php') ? 'is-active' : ''; ?>" href="shop" aria-label="Search" title="Search">
                     <?php echo rk_icon('search', 16, 2); ?>
                 </a>
-                <a class="header-icon-btn" href="#" aria-label="My Account" title="My Account">
+                <a class="header-icon-btn <?php echo ($current_page === 'profile.php') ? 'is-active' : ''; ?>" href="profile" aria-label="My Account" title="My Account">
                     <?php echo rk_icon('user', 18, 1.8); ?>
                 </a>
-                <a class="header-icon-btn" href="#" aria-label="My Wishlist" title="Wishlist">
+                <a class="header-icon-btn <?php echo ($current_page === 'wishlist.php') ? 'is-active' : ''; ?>" href="wishlist" aria-label="My Wishlist" title="Wishlist">
                     <?php echo rk_icon('heart', 18, 1.8); ?>
                 </a>
-                <a class="header-icon-btn" href="#" aria-label="Shopping Bag" title="Shopping Bag">
+                <a class="header-icon-btn <?php echo ($current_page === 'cart.php') ? 'is-active' : ''; ?>" href="cart" aria-label="Shopping Bag" title="Shopping Bag">
                     <?php echo rk_icon('bag', 18, 1.8); ?>
                 </a>
                 <a class="header-icon-btn header-icon-btn--wa" href="https://wa.me/" target="_blank" rel="noopener" aria-label="WhatsApp" title="Chat on WhatsApp">
@@ -93,8 +96,8 @@
     <nav class="header-nav" id="headerNav" aria-label="Main Categories">
         <div class="header-nav__inner">
             <ul class="header-nav-grid" id="mainNav">
-                <li class="header-nav-grid__item is-active">
-                    <a class="header-nav-grid__link" href="index.php">
+                <li class="header-nav-grid__item <?php echo ($current_page === 'index.php' || $current_page === '') ? 'is-active' : ''; ?>">
+                    <a class="header-nav-grid__link" href="index">
                         <span class="header-nav-grid__text">HOME</span>
                     </a>
                 </li>
@@ -114,9 +117,10 @@
 
         <!-- MEGA MENU PANELS — one per category, spanning the nav container -->
         <div class="mega-menu-host" id="megaMenuHost">
-            <?php foreach ($mega_menus as $mega_slug => $mega): ?>
-                <?php include __DIR__ . '/mega-menu.php'; ?>
-            <?php endforeach; ?>
+            <?php 
+            $shop_products = $shop_products ?? $GLOBALS['shop_products'] ?? [];
+            rk_render_desktop_mega_panels($mega_menus, $shop_products); 
+            ?>
         </div>
     </nav>
 

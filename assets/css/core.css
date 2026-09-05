@@ -1,4 +1,21 @@
 /* ==========================================================================
+   RK COLLECTION — CORE — tokens, base, header, footer, shared components, responsive
+   Loaded on every page by includes/header.php.
+   responsive.css comes last because its media queries override the
+   component rules above it.
+
+   Sections in this file:
+     01. STYLE                  Design tokens, base, home page and every shared component
+     02. PAGE-HEADER            Shared page header band (.shop-hero) used by inner pages
+     03. RESPONSIVE             Breakpoint overrides for everything above
+   ========================================================================== */
+
+
+/* ==========================================================================
+   01. STYLE
+   Design tokens, base, home page and every shared component
+   ========================================================================== */
+/* ==========================================================================
    RK COLLECTION — LUXURY HERITAGE SILKS & SAREES
    Artistic Indian Couture Theme: Maha Gauri aesthetic
    ========================================================================== */
@@ -49,25 +66,16 @@
     --grad-heritage:       linear-gradient(118deg, #3c070e 0%, #540b14 38%, #7a2318 72%, #a06d1f 100%);
 
     /* --- Typography -------------------------------------------------------- */
-    /* --- Type system ------------------------------------------------------
-       Three families, three jobs — nothing shares a role.
-
-       Bricolage Grotesque : display typeface. Contemporary expressive grotesque.
-                             Titles and headings only.
-       Geist               : the workhorse sans. Body, nav, buttons, prices, forms.
-                             Neutral and highly legible at small sizes.
-       Geist Mono          : micro-labels ONLY — the announcement strip, badges, meta.
-                             Mono earns its place on tiny tracked-out labels. */
-    --font-display:        "Bricolage Grotesque", system-ui, -apple-system, sans-serif;
-    --font-body:           "Geist", "Inter", system-ui, -apple-system, sans-serif;
-    --font-label:          "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+    /* Duru Sans ships a single 400 weight — headings carry contrast through
+       size and tracking, not weight. Overpass (300-700) is the workhorse. */
+    --font-display:        "Duru Sans", "Overpass", system-ui, -apple-system, sans-serif;
+    --font-body:           "Overpass", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-label:          "Overpass", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-script:         "Satisfy", "Segoe Script", "Brush Script MT", cursive;
 
     /* Back-compat aliases so existing rules keep resolving */
-    --font-title:          var(--font-body);
-    --font-serif:          var(--font-display);
+    --font-title:          var(--font-display);
     --font-sans:           var(--font-body);
-    --font-mono:           var(--font-label);
-    --font-geist:          var(--font-body);
 
     /* --- Type scale -------------------------------------------------------- */
     --fs-eyebrow:          10.5px;
@@ -142,15 +150,121 @@ body {
     background-color: var(--color-maroon-deep);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Duru Sans and Satisfy are single-weight; never let the browser smear
+       a synthetic bold out of them. Overpass supplies real 300-700. */
+    font-synthesis-weight: none;
+    font-synthesis: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0 0 0.4em;
     font-family: var(--font-title);
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.015em;
     color: inherit;
+}
+
+/* Available to every page: removes an element visually while leaving it in the
+   accessibility tree (used for headings a design does not show). */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ==========================================================================
+   SCRIPT ACCENT — the Satisfy flourish used across every section header.
+   Sits above or beside a Duru Sans title; never used for running text.
+   ========================================================================== */
+.rk-script {
+    display: block;
+    margin: 0 0 -2px;
+    font-family: var(--font-script);
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-gold-deep);
+    transform: rotate(-2deg);
+    transform-origin: left center;
+}
+
+.rk-script--center {
+    transform-origin: center;
+}
+
+.rk-script--gold {
+    color: var(--color-gold);
+}
+
+/* On the dusty royal ground the antique gold muddies; use the lit tone. */
+.rk-script--royal {
+    color: var(--color-gold-on-royal);
+}
+
+.rk-script--cream {
+    color: var(--color-cream-dim);
+}
+
+.rk-script--wine {
+    color: var(--color-wine);
+}
+
+.rk-script--sm {
+    font-size: clamp(20px, 2vw, 26px);
+}
+
+.rk-script--lg {
+    font-size: clamp(30px, 4vw, 52px);
+}
+
+/* Zari rule — a woven gold hairline that fades at both ends, used instead of
+   a flat divider wherever a section needs a break. */
+.rk-zari-rule {
+    display: block;
+    width: min(220px, 46vw);
+    height: 1px;
+    margin: 18px auto 0;
+    border: 0;
+    background: linear-gradient(90deg,
+        rgba(207, 167, 90, 0) 0%,
+        var(--color-gold) 22%,
+        var(--color-gold-bright) 50%,
+        var(--color-gold) 78%,
+        rgba(207, 167, 90, 0) 100%);
+}
+
+.rk-zari-rule--left {
+    margin-left: 0;
+    margin-right: auto;
+    background: linear-gradient(90deg,
+        var(--color-gold) 0%,
+        var(--color-gold-bright) 34%,
+        rgba(207, 167, 90, 0) 100%);
+}
+
+/* Prices lost their monospace face in the type change, so line the figures up
+   with tabular numerals instead — columns of prices still align. */
+.product-card__price,
+.product-card__price--sale,
+.product-card__price--original,
+.product-details__price,
+.product-details__price--original,
+.cart-item-price,
+.cart-item-price--original,
+.wishlist-card__price,
+.wishlist-card__price--mrp,
+.mega-menu__featured-price,
+.profile-order-price,
+.shop-filters__price-values {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
 }
 
 img {
@@ -356,11 +470,12 @@ button {
     color: #5d2b30;
     text-decoration: none;
     padding: 6px 4px;
-    transition: color var(--t-fast);
+    transition: color 0.28s ease, transform 0.28s ease;
 }
 
 .header-text-btn:hover {
     color: var(--color-maroon);
+    transform: translateX(3px);
 }
 
 .header-icon-btn {
@@ -378,15 +493,12 @@ button {
 
 .header-icon-btn:hover {
     color: var(--color-maroon);
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
-.header-icon-btn--search {
-    background-color: rgba(230, 215, 195, 0.45);
-}
-
-.header-icon-btn--search:hover {
-    background-color: rgba(220, 200, 175, 0.65);
+.header-icon-btn.is-active {
+    background-color: rgba(84, 11, 20, 0.12);
+    color: var(--color-maroon);
 }
 
 .header-icon-btn--wa {
@@ -405,11 +517,12 @@ button {
     letter-spacing: 0.1em;
     line-height: 1;
     color: #5d2b30;
-    transition: color var(--t-fast);
+    transition: color 0.28s ease, transform 0.28s ease;
 }
 
 .header-pill-btn:hover {
     color: var(--color-maroon);
+    transform: translateX(3px);
 }
 
 .header-pill-btn__icon {
@@ -445,8 +558,8 @@ button {
    06. ROW 3 — SEGMENTED PANEL NAVIGATION (ROYAL CLASSIC)
    Architectural grid: equal-width cells divided by gold hairlines, an
    illuminated active cell, and a glowing gold rule beneath it.
-   Typography stays Geist at a readable size — the earlier version of this
-   panel was set in Geist Mono at 11px, which is what made it feel generic.
+   Typography stays Overpass at a readable size — the earlier version of this
+   panel was set in a mono face at 11px, which is what made it feel generic.
    ========================================================================== */
 .header-nav {
     position: relative;
@@ -537,7 +650,7 @@ button {
     text-align: center;
     white-space: nowrap;
     color: var(--color-cream);
-    transition: color var(--t-fast), background-color var(--t-fast);
+    transition: color 0.28s ease, background-color 0.28s ease, transform 0.28s ease;
 }
 
 .header-nav-grid__text {
@@ -550,6 +663,7 @@ button {
 .header-nav-grid__link:focus-visible {
     color: var(--color-gold-on-royal);
     background-color: rgba(245, 200, 119, 0.12);
+    transform: translateX(3px);
 }
 
 /* Active cell: recessed fill plus an illuminated gold rule */
@@ -826,7 +940,7 @@ button {
     margin: 0 0 12px;
     font-family: var(--font-display);
     font-size: var(--fs-display);
-    font-weight: 500;
+    font-weight: 400;
     line-height: var(--lh-tight);
     letter-spacing: -0.015em;
     text-align: center;
@@ -868,7 +982,7 @@ button {
     margin: 0 0 16px;
     font-family: var(--font-display);
     font-size: var(--fs-h3);
-    font-weight: 500;
+    font-weight: 400;
     line-height: var(--lh-tight);
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -1004,12 +1118,13 @@ button {
     line-height: 1.4;
     color: rgba(246, 239, 227, 0.86);
     text-decoration: none;
-    transition: color var(--t-fast);
+    transition: color 0.28s ease, transform 0.28s ease;
 }
 
 .mega-menu__link:hover,
 .mega-menu__link:focus-visible {
     color: var(--color-gold-on-royal);
+    transform: translateX(3px);
 }
 
 /* --- Featured product column --------------------------------------------- */
@@ -1089,11 +1204,12 @@ button {
     text-transform: uppercase;
     color: var(--color-gold-on-royal);
     text-decoration: none;
-    transition: color var(--t-fast);
+    transition: color 0.28s ease, transform 0.28s ease;
 }
 
 .mega-menu__view-all:hover {
     color: var(--color-gold-on-royal-hi);
+    transform: translateX(3px);
 }
 
 .mega-menu__view-all-arrow {
@@ -1109,7 +1225,7 @@ button {
 }
 
 .mega-menu__view-all:hover .mega-menu__view-all-arrow {
-    transform: translateX(4px);
+    transform: translateX(6px);
 }
 
 /* Trigger cell stays lit while its panel is open */
@@ -1221,7 +1337,7 @@ button {
     writing-mode: vertical-rl;
     font-family: var(--font-display);
     font-size: clamp(75px, 7vw, 100px);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.22em;
     color: rgba(220, 215, 205, 0.38);
     text-transform: uppercase;
@@ -1355,7 +1471,7 @@ button {
 .shop-by-collection__heading {
     font-family: var(--font-display);
     font-size: clamp(32px, 3.6vw, 46px);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.04em;
     color: var(--color-maroon);
     text-transform: uppercase;
@@ -1389,12 +1505,12 @@ button {
     background-color: transparent;
 }
 
-.collection-grid__card--party {
+.collection-grid__card--soft-silk {
     height: 480px;
 }
 
-.collection-grid__card--kaftan,
-.collection-grid__card--bandhani {
+.collection-grid__card--kuppadam,
+.collection-grid__card--kalanjali {
     height: 310px;
 }
 
@@ -1426,8 +1542,8 @@ button {
 }
 
 .collection-grid__script {
-    font-family: "Great Vibes", cursive;
-    font-size: 46px;
+    font-family: var(--font-script);
+    font-size: 40px;
     font-weight: 400;
     color: #ffffff;
     line-height: 1;
@@ -1516,7 +1632,7 @@ button {
 .product-slider-section__title {
     font-family: var(--font-display);
     font-size: clamp(24px, 2.5vw, 34px);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 0.03em;
     color: var(--color-maroon);
     text-transform: uppercase;
@@ -1670,30 +1786,56 @@ button {
 }
 
 /* Add to Cart Button Bottom Right */
+/* Compact add-to-cart pill in the bottom-right of the card image. Labelled
+   rather than a bare icon, but sized to sit on the saree instead of covering
+   it the way a full-width bar did. */
 .product-card__cart-btn {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
+    right: 10px;
+    bottom: 10px;
     z-index: 4;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--color-maroon);
+    gap: 5px;
+    padding: 7px 11px;
+    border: 1px solid rgba(207, 167, 90, 0.34);
+    border-radius: 100px;
     background-image: var(--grad-maroon);
-    border: none;
-    color: #ffffff;
+    font-family: var(--font-label);
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: 0.11em;
+    line-height: 1;
+    white-space: nowrap;
+    text-transform: uppercase;
+    color: var(--color-gold-bright);
     box-shadow: 0 4px 12px rgba(84, 11, 20, 0.25);
-    transition: all 0.25s ease;
     cursor: pointer;
+    transition: border-color var(--t-fast), filter var(--t-fast), transform var(--t-fast);
+}
+
+.product-card__cart-plus {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    transition: transform var(--t-base);
 }
 
 .product-card__cart-btn:hover {
-    background-color: var(--color-maroon-dark);
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(84, 11, 20, 0.35);
+    border-color: var(--color-gold);
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.product-card__cart-btn:hover .product-card__cart-plus {
+    transform: rotate(90deg);
+}
+
+.product-card__cart-btn.is-added {
+    background-image: none;
+    background-color: #2f6b3f;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
 }
 
 /* Product Info Below Image */
@@ -1796,60 +1938,81 @@ button {
 }
 
 /* ==========================================================================
-   12. CLIENT TESTIMONIALS SLIDER COMPONENT (Light, Edge-to-Edge, Sober)
+   12. CLIENT TESTIMONIALS — "WOVEN VOICES"
+   Arch-topped paper panels on a linen ground. No card borders, no floating
+   glyphs: the structure comes from the arch, the paper grain and a zari
+   thread that draws itself under each quote.
    ========================================================================== */
 .testimonials {
     position: relative;
-    background-color: #faf9f6;
-    padding-top: 80px;
-    padding-bottom: 85px;
-    overflow: hidden;
     width: 100vw;
     margin-inline: calc(50% - 50vw);
-    border-top: 1px solid rgba(84, 11, 20, 0.05);
+    padding-top: 88px;
+    padding-bottom: 92px;
+    overflow: hidden;
+    background-color: var(--color-cream);
+    background-image: var(--linen);
+    background-blend-mode: multiply;
+}
+
+/* A single wide arch drawn in gold thread behind the whole section. */
+.testimonials::before {
+    content: "";
+    position: absolute;
+    top: 34px;
+    left: 50%;
+    width: min(880px, 84vw);
+    height: 340px;
+    transform: translateX(-50%);
+    border: 1px solid var(--color-gold-faint);
+    border-bottom: 0;
+    border-radius: 440px 440px 0 0;
+    pointer-events: none;
 }
 
 .testimonials__inner {
+    position: relative;
+    z-index: 2;
     width: 100%;
     margin: 0 auto;
-    position: relative;
 }
 
-/* Header */
+/* Header ------------------------------------------------------------------ */
 .testimonials__header {
-    text-align: center;
-    max-width: 720px;
-    margin: 0 auto 48px auto;
+    max-width: 760px;
+    margin: 0 auto 52px;
     padding-inline: 24px;
+    text-align: center;
 }
 
 .testimonials__title {
+    margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(28px, 3vw, 40px);
-    font-weight: 500;
-    line-height: 1.25;
-    color: #1c1917;
-    margin: 0 0 10px 0;
-    letter-spacing: -0.01em;
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    color: var(--color-maroon);
 }
 
 .testimonials__subtitle {
+    max-width: 540px;
+    margin: 16px auto 0;
     font-family: var(--font-body);
     font-size: 15px;
-    font-weight: 400;
-    color: #71717a;
-    margin: 0;
-    line-height: 1.5;
+    font-weight: 300;
+    line-height: var(--lh-body);
+    color: #7a6b63;
 }
 
-/* Slider Wrap (Full Bleed Edge-to-Edge) */
+/* Slider ------------------------------------------------------------------ */
 .testimonials__slider-wrap {
     position: relative;
     width: 100%;
 }
 
 .testimonials__swiper {
-    padding-block: 10px 20px;
+    padding-block: 14px 24px;
     padding-inline: 40px;
 }
 
@@ -1858,185 +2021,205 @@ button {
 }
 
 .testimonials__swiper .swiper-slide {
-    height: auto;
     display: flex;
+    height: auto;
 }
 
-/* Slide Card */
+/* Panel ------------------------------------------------------------------- */
 .testimonials__card {
     position: relative;
-    background-color: #ffffff;
-    border-radius: 16px;
-    padding: 28px 30px;
-    border: 1px solid rgba(84, 11, 20, 0.07);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    height: 100%;
-    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    padding: 0 30px 28px;
+    background-color: var(--color-cream-warm);
+    background-image: var(--cream-grain);
+    /* The arch is the card — no border, no drop shadow ring. */
+    border-radius: 180px 180px 4px 4px;
+    box-shadow: 0 1px 0 rgba(207, 167, 90, 0.3) inset,
+                0 16px 34px rgba(60, 7, 14, 0.07);
+    transition: transform var(--t-base), box-shadow var(--t-base);
     overflow: hidden;
 }
 
 .testimonials__card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(84, 11, 20, 0.18);
-    box-shadow: 0 10px 28px rgba(84, 11, 20, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 1px 0 rgba(207, 167, 90, 0.5) inset,
+                0 24px 48px rgba(60, 7, 14, 0.12);
 }
 
-/* Watermark Quote Glyph */
-.testimonials__quote-glyph {
-    position: absolute;
-    top: 12px;
-    right: 22px;
-    font-family: Georgia, serif;
-    font-size: 72px;
-    line-height: 1;
-    color: var(--color-gold-deep);
-    opacity: 0.12;
-    pointer-events: none;
-    user-select: none;
-}
-
-/* User Meta Row */
+/* Portrait — arch-cropped, seated in the crown of the panel */
 .testimonials__user-row {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
+    gap: 10px;
+    margin: 30px 0 18px;
+    text-align: center;
 }
 
 .testimonials__avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 82px;
+    height: 98px;
     object-fit: cover;
-    border: 2px solid var(--color-gold-line);
-    flex-shrink: 0;
+    border: 0;
+    border-radius: 60px 60px 6px 6px;
+    filter: saturate(0.9);
+    transition: filter var(--t-base), transform var(--t-base);
+}
+
+.testimonials__card:hover .testimonials__avatar {
+    filter: saturate(1.05);
+    transform: scale(1.03);
 }
 
 .testimonials__user-meta {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 3px;
 }
 
+/* The reviewer's name carries the house script */
 .testimonials__name {
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 600;
-    color: #1c1917;
     margin: 0;
-    line-height: 1.2;
+    font-family: var(--font-script);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-maroon);
 }
 
 .testimonials__location {
-    font-family: var(--font-body);
-    font-size: 12px;
+    font-family: var(--font-label);
+    font-size: 9.5px;
     font-weight: 500;
-    color: #71717a;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-gold-deep);
 }
 
 .testimonials__stars {
     display: flex;
     align-items: center;
-    gap: 3px;
-    margin-top: 4px;
+    gap: 4px;
+    margin-top: 7px;
 }
 
-/* Quote Text */
+.testimonials__stars svg {
+    fill: var(--color-gold);
+}
+
+/* Quote ------------------------------------------------------------------- */
 .testimonials__quote {
-    font-family: var(--font-body);
-    font-size: 14px;
+    margin: 0 0 18px;
+    font-family: var(--font-display);
+    font-size: 16.5px;
     font-weight: 400;
-    line-height: 1.65;
-    color: #374151;
-    margin: 0 0 20px 0;
+    line-height: 1.62;
+    text-align: center;
+    color: #4b3a35;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* Card Footer */
+/* Footer — a zari thread that weaves itself open on hover */
 .testimonials__card-footer {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    padding-top: 12px;
-    border-top: 1px dashed #f3f4f6;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 4px;
+    border: 0;
+}
+
+.testimonials__card-footer::before {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: linear-gradient(90deg,
+        rgba(207, 167, 90, 0) 0%,
+        var(--color-gold) 50%,
+        rgba(207, 167, 90, 0) 100%);
+    transition: width var(--t-base);
+}
+
+.testimonials__card:hover .testimonials__card-footer::before {
+    width: 132px;
 }
 
 .testimonials__date {
-    font-family: var(--font-body);
-    font-size: 11.5px;
+    font-family: var(--font-label);
+    font-size: 9.5px;
     font-weight: 500;
-    color: #9ca3af;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a2988a;
 }
 
-/* Controls & 3-Dot Pagination Cluster */
+/* Controls ---------------------------------------------------------------- */
 .testimonials__controls {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 32px;
+    gap: 14px;
+    margin-top: 34px;
 }
 
 .testimonials__nav-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--color-gold-line);
     border-radius: 50%;
-    background-color: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: transparent;
     color: var(--color-maroon);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: background-color var(--t-fast), color var(--t-fast),
+                border-color var(--t-fast), transform var(--t-fast);
 }
 
 .testimonials__nav-btn:hover {
-    background-color: var(--color-maroon);
-    color: #ffffff;
-    border-color: var(--color-maroon);
-    transform: scale(1.08);
-    box-shadow: 0 6px 16px rgba(84, 11, 20, 0.2);
+    background-image: var(--grad-maroon);
+    border-color: transparent;
+    color: var(--color-gold-bright);
+    transform: translateY(-2px);
 }
 
+/* Progress reads as woven thread rather than a row of dots */
 .testimonials__dots {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding-inline: 4px;
+    gap: 5px;
+    padding-inline: 6px;
 }
 
 .testimonials__dot {
     display: inline-block;
+    width: 16px;
+    height: 2px;
     padding: 0;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background-color: #d4cebe;
     border: none;
-    opacity: 0.6;
+    border-radius: 0;
+    background-color: var(--color-cream-dim);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: width var(--t-base), background-color var(--t-base);
 }
 
 .testimonials__dot:hover {
-    opacity: 0.9;
+    background-color: var(--color-gold);
 }
 
 .testimonials__dot--active {
-    width: 22px;
-    height: 7px;
-    border-radius: 10px;
-    background-color: var(--color-maroon);
-    opacity: 1;
+    width: 40px;
+    height: 2px;
+    border-radius: 0;
+    background-image: var(--grad-gold);
 }
 
 /* ==========================================================================
@@ -2443,7 +2626,7 @@ button {
 .site-footer__hero-title {
     font-family: var(--font-display);
     font-size: clamp(48px, 4.5vw, 68px);
-    font-weight: 500;
+    font-weight: 400;
     color: #ffffff;
     letter-spacing: -0.02em;
     line-height: 1.05;
@@ -2614,7 +2797,7 @@ button {
 .site-footer__col-title {
     font-family: var(--font-display);
     font-size: 26px;
-    font-weight: 500;
+    font-weight: 400;
     color: #ffffff;
     margin: 0 0 24px 0;
     letter-spacing: -0.01em;
@@ -2921,7 +3104,7 @@ button {
 .blog-section__title {
     font-family: var(--font-display);
     font-size: clamp(28px, 3vw, 40px);
-    font-weight: 500;
+    font-weight: 400;
     color: #1c1917;
     margin: 0;
     line-height: 1.2;
@@ -3053,7 +3236,7 @@ button {
 .blog-card__title {
     font-family: var(--font-display);
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.35;
     margin: 0 0 12px 0;
 }
@@ -3140,4 +3323,1209 @@ button {
 
 .blog-section__view-all-btn:hover svg {
     transform: translateX(4px);
+}
+
+/* Mega menu links now carry a live count from the catalogue */
+.mega-menu__link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mega-menu__link-count {
+    font-family: var(--font-label);
+    font-size: 9.5px;
+    font-weight: 500;
+    color: var(--color-gold-on-royal);
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+}
+
+.mega-menu__link:hover .mega-menu__link-count {
+    opacity: 0.9;
+}
+
+
+/* ==========================================================================
+   02. PAGE-HEADER
+   Shared page header band (.shop-hero) used by inner pages
+   ========================================================================== */
+/* ==========================================================================
+   RK COLLECTION — SHARED PAGE HEADER BAND
+   Centred title + breadcrumb strip used by shop.php and product-details.php.
+   Loaded per page through the $page_css hook, never from style.css.
+   ========================================================================== */
+
+/* ==========================================================================
+   PAGE HEADER BAND
+   ========================================================================== */
+.shop-hero {
+    background-color: #faf6ee;
+    border-bottom: 1px solid var(--color-gold-faint);
+    padding: 58px var(--pad-h) 52px;
+    text-align: center;
+}
+
+.shop-hero__eyebrow {
+    margin: 0 0 14px;
+    font-family: var(--font-label);
+    font-size: var(--fs-eyebrow);
+    font-weight: 400;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-gold-deep);
+}
+
+.shop-hero__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 3.6vw, 46px);
+    font-weight: 400;
+    line-height: var(--lh-tight);
+    letter-spacing: -0.01em;
+    color: var(--color-maroon);
+}
+
+.shop-hero__rule {
+    width: 46px;
+    height: 1px;
+    margin: 20px auto 16px;
+    background-color: var(--color-gold);
+    opacity: 0.7;
+}
+
+.shop-hero__crumbs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-family: var(--font-body);
+    font-size: var(--fs-micro);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: #8b8378;
+}
+
+.shop-hero__crumb-link {
+    color: #8b8378;
+    text-decoration: none;
+    transition: color var(--t-fast);
+}
+
+.shop-hero__crumb-link:hover {
+    color: var(--color-maroon);
+}
+
+.shop-hero__crumb--current {
+    color: var(--color-maroon);
+}
+
+.shop-hero__crumb-sep {
+    color: var(--color-gold);
+    opacity: 0.8;
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .shop-hero {
+        padding: 46px 24px 42px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .shop-hero {
+        padding: 34px 18px 30px;
+    }
+
+    .shop-hero__rule {
+        margin: 15px auto 12px;
+    }
+}
+
+
+/* ==========================================================================
+   03. RESPONSIVE
+   Breakpoint overrides for everything above
+   ========================================================================== */
+/* ==========================================================================
+   RK COLLECTION — RESPONSIVE STYLES
+   Mobile, Tablet, and Desktop Adaptations
+   ========================================================================== */
+
+/* ==========================================================================
+   HEADER RESPONSIVE FIXES — MOBILE & TABLET (max-width 991.98px)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    /* Hide desktop-only text links (ABOUT, CONTACT) from mobile header bar */
+    .header-text-btn {
+        display: none !important;
+    }
+
+    /* Mobile hamburger button */
+    .header-hamburger-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        color: #3b181d;
+        background: transparent;
+        border: none;
+    }
+
+    .header-logo-strip__inner {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-inline: 12px;
+        min-height: 52px;
+    }
+
+    .header-logo-strip__side {
+        flex: 0 0 auto;
+        gap: 6px;
+    }
+
+    .header-logo-strip__side--left {
+        z-index: 2;
+    }
+
+    .header-logo-strip__side--right {
+        z-index: 2;
+        gap: 4px;
+    }
+
+    .header-icon-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .header-logo-strip__brand {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        width: max-content;
+        max-width: 170px;
+    }
+
+    .header-logo-strip__logo {
+        max-height: 38px;
+        width: auto;
+        max-width: 170px;
+        object-fit: contain;
+    }
+
+    /* Row 1 — Announcement Bar Offer Text */
+    .header-announcement__offer-text {
+        font-size: 9.5px;
+        letter-spacing: 0.06em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 94%;
+        display: inline-block;
+        padding-inline: 4px;
+    }
+
+    /* Row 3 — Segmented Nav Scroll Bar */
+    .header-nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .header-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .header-nav__inner {
+        padding-inline: 4px;
+        justify-content: flex-start;
+    }
+
+    .header-nav-grid {
+        min-width: max-content;
+        justify-content: flex-start;
+        max-width: none;
+    }
+
+    .header-nav-grid__item {
+        flex: 0 0 auto;
+    }
+
+    .header-nav-grid__link {
+        padding: 9px 14px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+    }
+
+    .header-nav-grid__item::before {
+        opacity: 0.25;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-logo-strip__brand {
+        max-width: 140px;
+    }
+
+    .header-logo-strip__logo {
+        max-height: 30px;
+        max-width: 140px;
+    }
+
+    .header-icon-btn {
+        width: 25px;
+        height: 25px;
+    }
+
+    .header-logo-strip__side--right {
+        gap: 1px;
+    }
+}
+
+/* ==========================================================================
+   MOBILE — max-width 575px
+   ========================================================================== */
+@media (max-width: 575.98px) {
+    :root {
+        --pad-h: 14px;
+        --announce-h: 30px;
+        --strip-py: 10px;
+        --strip-py-stuck: 6px;
+        --logo-h: 40px;
+        --logo-h-stuck: 32px;
+    }
+}
+
+/* ==========================================================================
+   LARGE MOBILE — 576px to 767px
+   ========================================================================== */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    :root {
+        --pad-h: 18px;
+        --logo-h: 60px;
+        --logo-h-stuck: 46px;
+    }
+
+    .header-announcement__text {
+        font-size: 10px;
+        letter-spacing: 0.16em;
+    }
+
+    .header-logo-strip__side {
+        gap: 8px;
+    }
+
+    .header-logo-strip__logo {
+        max-width: 280px;
+    }
+
+    .header-pill-btn {
+        padding: 4px 9px;
+        gap: 5px;
+        font-size: 9.5px;
+    }
+
+    .header-pill-btn__label {
+        display: none;
+    }
+
+    .header-nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .header-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .header-nav__inner {
+        padding-inline: 0;
+    }
+
+    .header-nav-grid {
+        min-width: max-content;
+    }
+
+    .header-nav-grid__item {
+        flex: 0 0 auto;
+    }
+
+    .header-nav-grid__link {
+        padding: 13px 18px;
+        font-size: 12px;
+        letter-spacing: 0.11em;
+    }
+}
+
+/* ==========================================================================
+   TABLET — 768px to 1023px
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+    .header-nav__inner {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .header-nav__inner::-webkit-scrollbar { display: none; }
+
+    .header-nav-grid {
+        min-width: max-content;
+    }
+
+    :root {
+        --pad-h: 24px;
+        --logo-h: 70px;
+        --logo-h-stuck: 50px;
+    }
+
+    .header-announcement__text {
+        font-size: 10px;
+        letter-spacing: 0.2em;
+    }
+
+    .header-logo-strip__side {
+        gap: 10px;
+    }
+
+    .header-logo-strip__logo {
+        max-width: 360px;
+    }
+
+    .header-pill-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+
+    .header-nav-grid__link {
+        padding: 13px 18px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+    }
+}
+
+/* ==========================================================================
+   DESKTOP — 1024px to 1399px
+   ========================================================================== */
+@media (min-width: 1024px) and (max-width: 1399.98px) {
+
+    :root {
+        --pad-h: 30px;
+        --logo-h: 48px;
+    }
+
+    .header-nav-grid__link {
+        padding: 14px 8px;
+        font-size: 12px;
+        letter-spacing: 0.11em;
+    }
+}
+
+/* ==========================================================================
+   LARGE DESKTOP — 1400px and up
+   ========================================================================== */
+@media (min-width: 1400px) {
+
+    :root {
+        --pad-h: 40px;
+        --logo-h: 50px;
+    }
+
+    .header-nav-grid__link {
+        padding: 15px 10px;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+    }
+}
+
+/* ==========================================================================
+   ABOUT — EDITORIAL POSTER
+   ========================================================================== */
+
+/* Stack below 768px: portrait first, then the two label blocks */
+@media (max-width: 767.98px) {
+    .about {
+        padding-top: 44px;
+    }
+
+    .about__stage {
+        grid-template-columns: 1fr;
+        row-gap: 26px;
+        justify-items: center;
+    }
+
+    .about__figure {
+        order: 1;
+        width: min(340px, 86%);
+    }
+
+    .about__col {
+        order: 2;
+        max-width: 420px;
+        text-align: center;
+        padding: 0;
+    }
+
+    .about__col--left,
+    .about__col--right {
+        align-self: auto;
+        text-align: center;
+        padding: 0;
+    }
+
+    .about__col--right {
+        order: 3;
+    }
+
+    .about__text br {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+    .about {
+        padding-top: 54px;
+    }
+
+    .about__stage {
+        grid-template-columns: 1fr minmax(240px, 300px) 1fr;
+        column-gap: 18px;
+    }
+
+    .about__col--left  { max-width: 240px; padding-bottom: 16%; }
+    .about__col--right { max-width: 240px; padding-top: 12%; }
+
+    .about__text br { display: none; }
+}
+
+@media (min-width: 1400px) {
+    .about {
+        padding-top: 90px;
+    }
+
+    .about__stage {
+        column-gap: 64px;
+    }
+
+    .about__col--left,
+    .about__col--right { max-width: 380px; }
+}
+
+/* ==========================================================================
+   FEATURED PRODUCTS & SHOP BY COLLECTION RESPONSIVE RULES
+   ========================================================================== */
+
+/* Mobile (<576px) */
+@media (max-width: 575.98px) {
+    .featured-products {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+
+    .featured-products__watermark {
+        display: none;
+    }
+
+    .featured-products__grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .featured-products__card--right {
+        margin-top: 0;
+    }
+
+    .featured-products__card--left .featured-products__image-container,
+    .featured-products__card--right .featured-products__image-container {
+        height: 380px;
+    }
+
+    .framed-image::after {
+        inset: 10px;
+    }
+
+    /* Sub-block 2 */
+    .shop-by-collection {
+        padding-block: 50px;
+    }
+
+    .collection-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .collection-grid__card--soft-silk {
+        height: 380px;
+        order: 1;
+    }
+
+    .collection-grid__card--kuppadam {
+        height: 280px;
+        order: 2;
+    }
+
+    .collection-grid__card--kalanjali {
+        height: 280px;
+        order: 3;
+    }
+
+    .collection-grid__info-block {
+        order: 4;
+        margin-top: 24px;
+        padding-right: 0;
+    }
+
+    .collection-grid__overlay {
+        top: 24px;
+        left: 24px;
+    }
+
+    .collection-grid__script {
+        font-size: 36px;
+    }
+
+    .collection-grid__arrow-btn {
+        bottom: 24px;
+        left: 24px;
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Tablet (576px - 991.98px) */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .featured-products {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    .featured-products__watermark {
+        font-size: 80px;
+        opacity: 0.2;
+    }
+
+    .featured-products__grid {
+        gap: 28px;
+    }
+
+    .featured-products__card--right {
+        margin-top: 30px;
+    }
+
+    .featured-products__card--left .featured-products__image-container,
+    .featured-products__card--right .featured-products__image-container {
+        height: 420px;
+    }
+
+    /* Sub-block 2 tablet */
+    .shop-by-collection {
+        padding-block: 60px;
+    }
+
+    .collection-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .collection-grid__card--soft-silk {
+        height: 440px;
+    }
+
+    .collection-grid__col--right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .collection-grid__card--kuppadam,
+    .collection-grid__card--kalanjali {
+        height: 280px;
+    }
+}
+
+/* Large screens (>=1400px) */
+@media (min-width: 1400px) {
+    .featured-products__inner,
+    .shop-by-collection__inner {
+        max-width: 1240px;
+    }
+
+    .product-slider-section__inner {
+        max-width: 1320px;
+    }
+}
+
+/* Product Slider Sections Responsive */
+@media (max-width: 575.98px) {
+    .product-slider-section {
+        padding-top: 45px;
+        padding-bottom: 55px;
+    }
+
+    .product-slider-section__header {
+        align-items: center;
+    }
+
+    .product-slider-section__title {
+        font-size: 20px;
+    }
+
+    .product-slider-section__view-all {
+        font-size: 11px;
+    }
+
+    .product-slider__arrow {
+        display: none;
+    }
+
+    .product-card__info {
+        padding: 12px;
+    }
+
+    .product-card__title {
+        font-size: 13.5px;
+    }
+
+    .product-card__price {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .product-slider-section {
+        padding-top: 55px;
+        padding-bottom: 65px;
+    }
+
+    .product-slider__arrow--prev {
+        left: -12px;
+    }
+
+    .product-slider__arrow--next {
+        right: -12px;
+    }
+}
+
+/* ==========================================================================
+   TESTIMONIALS SECTION RESPONSIVE
+   ========================================================================== */
+@media (max-width: 575.98px) {
+    .testimonials {
+        padding-top: 55px;
+        padding-bottom: 65px;
+    }
+
+    .testimonials__header {
+        margin-bottom: 28px;
+    }
+
+    .testimonials__eyebrow {
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .testimonials::before {
+        top: 24px;
+        height: 220px;
+        border-radius: 300px 300px 0 0;
+    }
+
+    .testimonials__card {
+        padding: 0 20px 22px;
+        border-radius: 130px 130px 4px 4px;
+    }
+
+    .testimonials__user-row {
+        margin: 22px 0 14px;
+    }
+
+    .testimonials__avatar {
+        width: 68px;
+        height: 82px;
+        border-radius: 50px 50px 5px 5px;
+    }
+
+    .testimonials__name {
+        font-size: 23px;
+    }
+
+    .testimonials__location {
+        font-size: 9px;
+    }
+
+    .testimonials__quote {
+        font-size: 15px;
+        line-height: 1.58;
+        margin-bottom: 14px;
+    }
+
+    .testimonials__controls {
+        margin-top: 26px;
+        gap: 12px;
+    }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .testimonials {
+        padding-top: 70px;
+        padding-bottom: 75px;
+    }
+}
+
+/* --- Trust Pillars Responsive --- */
+@media (max-width: 991.98px) {
+    .trust-pillars__inner {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .trust-pillars__item {
+        flex: 0 0 calc(50% - 8px);
+        justify-content: flex-start;
+        padding: 14px 16px;
+    }
+
+    .trust-pillars__divider {
+        display: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .trust-pillars {
+        padding: 36px 0;
+    }
+
+    .trust-pillars__inner {
+        flex-direction: column;
+        gap: 0;
+        padding-inline: 24px;
+    }
+
+    .trust-pillars__item {
+        flex: 1;
+        width: 100%;
+        justify-content: flex-start;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .trust-pillars__item:last-child {
+        border-bottom: none;
+    }
+
+    .trust-pillars__icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .trust-pillars__icon svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* --- FAQ Responsive --- */
+@media (max-width: 991.98px) {
+    .faq {
+        padding-top: 76px;
+        padding-bottom: 80px;
+    }
+
+    .faq__head {
+        margin-bottom: 60px;
+    }
+
+    .faq__button {
+        grid-template-columns: 46px 1fr 22px;
+        gap: 0 20px;
+    }
+
+    .faq__answer-content p {
+        padding: 0 30px 24px 66px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .faq {
+        padding-top: 58px;
+        padding-bottom: 64px;
+    }
+
+    .faq__inner {
+        padding-inline: 18px;
+    }
+
+    .faq__head {
+        margin-bottom: 44px;
+    }
+
+    .faq__eyebrow {
+        margin-bottom: 20px;
+        padding: 7px 15px;
+        font-size: 11.5px;
+    }
+
+    /* Number capsule moves above the question so the wrap stays readable */
+    .faq__button {
+        grid-template-columns: 1fr 20px;
+        gap: 0 14px;
+        padding: 18px 0;
+    }
+
+    .faq__index {
+        grid-column: 1 / -1;
+        width: 46px;
+        height: 24px;
+        margin: 0 0 12px;
+    }
+
+    .faq__toggle {
+        width: 17px;
+        height: 17px;
+        margin-top: 5px;
+    }
+
+    .faq__toggle::before,
+    .faq__toggle::after {
+        width: 17px;
+    }
+
+    .faq__answer-content p {
+        padding: 0 26px 22px 0;
+        font-size: 14px;
+    }
+
+    .faq__foot {
+        margin-top: 48px;
+        gap: 16px;
+    }
+
+    .faq__cta {
+        margin-left: 0;
+    }
+}
+
+/* --- Footer Responsive --- */
+@media (max-width: 991.98px) {
+    .site-footer {
+        padding-top: 70px;
+        padding-bottom: 50px;
+    }
+
+    .site-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+    }
+
+    .site-footer__brand-col {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .site-footer {
+        padding-top: 55px;
+        padding-bottom: 40px;
+    }
+
+    .site-footer__inner {
+        padding-inline: 20px;
+    }
+
+    .site-footer__grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+    }
+
+    .site-footer__brand-col {
+        grid-column: span 1;
+    }
+
+    .site-footer__hero-title {
+        font-size: 42px;
+        margin-bottom: 24px;
+    }
+
+    .site-footer__newsletter {
+        margin-bottom: 30px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .header-hamburger-btn {
+        display: inline-flex;
+    }
+}
+
+/* ==========================================================================
+   ULTRA-WIDE MONITORS (1920px+ & 2560px+ 4K)
+   ========================================================================== */
+@media (min-width: 1920px) {
+    :root {
+        --wrap-max: 1800px;
+    }
+
+    .hero--royal-gallery {
+        max-height: 850px;
+    }
+
+    .product-slider-section__inner,
+    .testimonials__inner,
+    .trust-pillars__inner {
+        max-width: 1800px;
+    }
+
+    .faq__inner {
+        max-width: 1700px;
+    }
+
+    .faq__grid {
+        grid-template-columns: 480px 1fr;
+        gap: 80px;
+    }
+
+    .site-footer__inner {
+        max-width: 1850px;
+    }
+}
+
+@media (min-width: 2560px) {
+    :root {
+        --wrap-max: 2300px;
+    }
+
+    .hero--royal-gallery {
+        max-height: 1050px;
+    }
+
+    .product-slider-section__inner,
+    .testimonials__inner,
+    .trust-pillars__inner {
+        max-width: 2300px;
+    }
+
+    .faq__inner {
+        max-width: 2100px;
+    }
+
+    .faq__grid {
+        grid-template-columns: 560px 1fr;
+        gap: 100px;
+    }
+
+    .faq__title {
+        font-size: 52px;
+    }
+
+    .site-footer__inner {
+        max-width: 2300px;
+    }
+
+    .site-footer__hero-title {
+        font-size: 82px;
+    }
+
+    .site-footer__col-title {
+        font-size: 32px;
+    }
+
+    .site-footer__nav-list a,
+    .site-footer__info-list a {
+        font-size: 13.5px;
+    }
+
+    .blog-section__inner {
+        max-width: 2300px;
+    }
+
+    .blog-card__title {
+        font-size: 24px;
+    }
+}
+
+/* --- Blog Section Responsive --- */
+@media (max-width: 991.98px) {
+    .blog-section {
+        padding-top: 70px;
+        padding-bottom: 75px;
+    }
+
+    .blog-section__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 36px;
+    }
+
+    .blog-section__header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .blog-section {
+        padding-top: 55px;
+        padding-bottom: 60px;
+    }
+
+    .blog-section__inner {
+        padding-inline: 18px;
+    }
+
+    .blog-card__title {
+        font-size: 18px;
+    }
+}
+
+/* ==========================================================================
+   MEGA MENU RESPONSIVE
+   Desktop hover panels above 992px; drawer accordion below it.
+   ========================================================================== */
+
+/* --- Below 992px: the hover panels never render ------------------------- */
+@media (max-width: 991.98px) {
+    .mega-menu-host {
+        display: none;
+    }
+}
+
+/* --- Laptop: tighter columns -------------------------------------------- */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .mega-menu__inner {
+        padding: 22px 24px 16px;
+    }
+
+    .mega-menu__columns {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) 170px;
+        gap: 22px;
+    }
+
+    .mega-menu__link {
+        font-size: 13.5px;
+    }
+}
+
+/* --- Mobile drawer accordion -------------------------------------------- */
+.mobile-acc {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.mobile-acc__item {
+    border-bottom: 1px solid rgba(207, 167, 90, 0.16);
+}
+
+.mobile-acc__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    background: none;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    text-align: left;
+    color: var(--color-cream);
+    cursor: pointer;
+    transition: color var(--t-fast);
+}
+
+.mobile-acc__trigger:hover,
+.mobile-acc__item.is-open .mobile-acc__trigger {
+    color: var(--color-gold-bright);
+}
+
+.mobile-acc__chevron {
+    flex-shrink: 0;
+    color: var(--color-gold);
+    transition: transform 0.3s var(--ease-luxury);
+}
+
+.mobile-acc__item.is-open .mobile-acc__chevron {
+    transform: rotate(180deg);
+}
+
+/* 0fr → 1fr animates the panel open without measuring heights in JS */
+.mobile-acc__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s var(--ease-luxury);
+}
+
+.mobile-acc__item.is-open .mobile-acc__panel {
+    grid-template-rows: 1fr;
+}
+
+.mobile-acc__panel-inner {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.mobile-acc__group-heading {
+    display: block;
+    margin: 12px 0 7px;
+    font-family: var(--font-label);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+}
+
+.mobile-acc__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0 0 4px;
+    list-style: none;
+}
+
+.mobile-acc__link {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(246, 239, 227, 0.8);
+    text-decoration: none;
+}
+
+.mobile-acc__link:hover {
+    color: var(--color-gold-bright);
+}
+
+.mobile-acc__view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 12px 0 16px;
+    font-family: var(--font-label);
+    font-size: 9px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-gold);
+    text-decoration: none;
+}
+
+.mobile-acc__view-all-arrow {
+    display: inline-flex;
+    align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-acc__panel,
+    .mobile-acc__chevron {
+        transition: none;
+    }
 }

@@ -173,4 +173,93 @@
             more.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
     })();
+
+    /* ======================================================================
+       Interactive Star Rating Picker & Form Submit
+       ====================================================================== */
+    (function initReviewForm() {
+        var picker = document.getElementById('reviewStarPicker');
+        var form = document.getElementById('addReviewForm');
+
+        if (picker) {
+            var buttons = Array.prototype.slice.call(picker.querySelectorAll('.star-pick-btn'));
+            buttons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var val = parseInt(btn.getAttribute('data-value'), 10) || 5;
+                    picker.setAttribute('data-rating', val);
+                    buttons.forEach(function (b, idx) {
+                        b.classList.toggle('active', idx < val);
+                    });
+                });
+            });
+        }
+
+        window.submitProductReview = function () {
+            if (!form) return;
+            var submitBtn = document.getElementById('reviewSubmitBtn');
+            var origText = submitBtn ? submitBtn.textContent : 'Submit';
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
+
+            setTimeout(function () {
+                var nameInput = document.getElementById('reviewName');
+                var textInput = document.getElementById('reviewText');
+                var rating = picker ? parseInt(picker.getAttribute('data-rating'), 10) || 5 : 5;
+                var list = document.getElementById('productReviewsList');
+
+                if (list && nameInput && textInput) {
+                    var li = document.createElement('li');
+                    li.className = 'product-review-item';
+                    var initial = nameInput.value.trim().charAt(0).toUpperCase() || 'U';
+                    var starsHtml = '';
+                    for (var s = 1; s <= 5; s++) {
+                        var cls = s <= rating ? 'product-details__star product-details__star--full' : 'product-details__star product-details__star--empty';
+                        starsHtml += '<svg class="' + cls + '" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">' +
+                            '<path d="M12 1.7L15.3 8.4L22.7 9.5L17.3 14.7L18.6 22.1L12 18.6L5.4 22.1L6.7 14.7L1.3 9.5L8.7 8.4L12 1.7Z"/>' +
+                            '</svg>';
+                    }
+
+                    li.innerHTML =
+                        '<div class="product-review-item__head">' +
+                            '<div class="product-review-item__author">' +
+                                '<span class="product-review-item__avatar">' + initial + '</span>' +
+                                '<div class="product-review-item__author-info">' +
+                                    '<h4 class="product-review-item__name">' + escapeHtml(nameInput.value.trim()) + '</h4>' +
+                                    '<span class="product-review-item__meta">Just now</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="product-review-item__rating">' +
+                                '<span class="product-review-item__stars">' + starsHtml + '</span>' +
+                                '<span class="product-review-item__verified">✓ Verified Buyer</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<p class="product-review-item__text">' + escapeHtml(textInput.value.trim()) + '</p>';
+
+                    list.insertBefore(li, list.firstChild);
+                }
+
+                form.reset();
+                if (picker) {
+                    picker.setAttribute('data-rating', 5);
+                    var buttons = Array.prototype.slice.call(picker.querySelectorAll('.star-pick-btn'));
+                    buttons.forEach(function (b) { b.classList.add('active'); });
+                }
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Review Submitted!';
+                    setTimeout(function () { submitBtn.textContent = origText; }, 2500);
+                }
+            }, 600);
+        };
+
+        function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+    })();
 })();

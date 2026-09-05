@@ -9,6 +9,14 @@
  * the shop filters and the detail page need.
  */
 
+if (!function_exists('rk_slugify')) {
+    function rk_slugify($text)
+    {
+        $text = preg_replace('/[^A-Za-z0-9]+/', '-', (string) $text);
+        return strtolower(trim($text, '-'));
+    }
+}
+
 /* --------------------------------------------------------------------------
    FILTER TAXONOMY
    -------------------------------------------------------------------------- */
@@ -110,25 +118,63 @@ $shop_products = [
     ['id' => 13, 'title' => 'Banarasi Katan Meenakari Saree',     'price' => '₹16,750', 'sale_price' => '₹14,200', 'price_value' => 14200, 'category' => 'banarasi',    'fabric' => 'pure-silk',   'color' => 'pink',   'image' => 'assets/images/products/banarasi-kora-saree.jpg',     'badge' => 'SALE',       'badge_type' => 'maroon', 'added' => 12, 'popularity' => 90],
     ['id' => 14, 'title' => 'Banarasi Organza Tissue Saree',      'price' => '₹9,850',  'sale_price' => null,      'price_value' => 9850,  'category' => 'banarasi',    'fabric' => 'organza',     'color' => 'white',  'image' => 'assets/images/products/tissue-silk-saree.jpg',       'badge' => 'NEW',        'badge_type' => 'royal',   'added' => 11, 'popularity' => 79],
     ['id' => 15, 'title' => 'Chiffon Hand-Painted Pichwai Saree', 'price' => '₹7,100',  'sale_price' => '₹5,680',  'price_value' => 5680,  'category' => 'designer',    'fabric' => 'chiffon',     'color' => 'green',  'image' => 'assets/images/collections/party-collection.jpg',     'badge' => 'SALE',       'badge_type' => 'maroon', 'added' => 10, 'popularity' => 72],
-    ['id' => 16, 'title' => 'Georgette Sequin Cocktail Saree',    'price' => '₹6,300',  'sale_price' => null,      'price_value' => 6300,  'category' => 'fancy',       'fabric' => 'georgette',   'color' => 'black',  'image' => 'assets/images/collections/kaftan-collection.jpg',    'badge' => null,         'badge_type' => 'gold',   'added' => 9,  'popularity' => 66],
+    ['id' => 16, 'title' => 'Georgette Sequin Cocktail Saree',    'price' => '₹6,300',  'sale_price' => null,      'price_value' => 6300,  'category' => 'fancy',       'fabric' => 'georgette',   'color' => 'black',  'image' => 'assets/images/collections/soft-silk-saree.jpg',    'badge' => null,         'badge_type' => 'gold',   'added' => 9,  'popularity' => 66],
     ['id' => 17, 'title' => 'Bridal Kanjivaram Vaira Oosi Saree', 'price' => '₹32,000', 'sale_price' => '₹28,500', 'price_value' => 28500, 'category' => 'bridal',      'fabric' => 'pure-silk',   'color' => 'maroon', 'image' => 'assets/images/collections/kalanjali-silk-saree.jpg', 'badge' => 'BRIDAL',     'badge_type' => 'dark',   'added' => 8,  'popularity' => 97],
     ['id' => 18, 'title' => 'Bridal Banarasi Gold Tissue Saree',  'price' => '₹26,900', 'sale_price' => null,      'price_value' => 26900, 'category' => 'bridal',      'fabric' => 'organza',     'color' => 'gold',   'image' => 'assets/images/products/tissue-silk-saree.jpg',       'badge' => null,         'badge_type' => 'gold',   'added' => 7,  'popularity' => 89],
     ['id' => 19, 'title' => 'Handloom Jamdani Cotton Saree',      'price' => '₹3,900',  'sale_price' => '₹3,120',  'price_value' => 3120,  'category' => 'cotton',      'fabric' => 'cotton-silk', 'color' => 'white',  'image' => 'assets/images/collections/bandhani-collection.jpg',  'badge' => 'SALE',       'badge_type' => 'maroon', 'added' => 6,  'popularity' => 61],
     ['id' => 20, 'title' => 'Kota Doria Zari Check Saree',        'price' => '₹2,650',  'sale_price' => null,      'price_value' => 2650,  'category' => 'cotton',      'fabric' => 'cotton-silk', 'color' => 'pink',   'image' => 'assets/images/collections/party-collection.jpg',     'badge' => null,         'badge_type' => 'gold',   'added' => 5,  'popularity' => 54],
     ['id' => 21, 'title' => 'Tussar Ghicha Kantha Work Saree',    'price' => '₹10,400', 'sale_price' => '₹8,900',  'price_value' => 8900,  'category' => 'silk',        'fabric' => 'tussar',      'color' => 'orange', 'image' => 'assets/images/collections/soft-silk-saree.jpg',      'badge' => 'SALE',       'badge_type' => 'maroon', 'added' => 4,  'popularity' => 76],
-    ['id' => 22, 'title' => 'Mysore Crepe Silk Plain Saree',      'price' => '₹5,200',  'sale_price' => null,      'price_value' => 5200,  'category' => 'silk',        'fabric' => 'pure-silk',   'color' => 'black',  'image' => 'assets/images/collections/kaftan-collection.jpg',    'badge' => null,         'badge_type' => 'gold',   'added' => 3,  'popularity' => 69],
+    ['id' => 22, 'title' => 'Mysore Crepe Silk Plain Saree',      'price' => '₹5,200',  'sale_price' => null,      'price_value' => 5200,  'category' => 'silk',        'fabric' => 'pure-silk',   'color' => 'black',  'image' => 'assets/images/collections/soft-silk-saree.jpg',    'badge' => null,         'badge_type' => 'gold',   'added' => 3,  'popularity' => 69],
     ['id' => 23, 'title' => 'Designer Organza Floral Drape',      'price' => '₹12,800', 'sale_price' => '₹10,900', 'price_value' => 10900, 'category' => 'designer',    'fabric' => 'organza',     'color' => 'blue',   'image' => 'assets/images/collections/kuppadam-sico-saree.jpg',  'badge' => 'NEW',        'badge_type' => 'royal',   'added' => 2,  'popularity' => 83],
     ['id' => 24, 'title' => 'Fancy Chiffon Ombre Party Saree',    'price' => '₹4,800',  'sale_price' => null,      'price_value' => 4800,  'category' => 'fancy',       'fabric' => 'chiffon',     'color' => 'pink',   'image' => 'assets/images/collections/bandhani-collection.jpg',  'badge' => null,         'badge_type' => 'gold',   'added' => 1,  'popularity' => 57],
 ];
 
-/* Every card sitewide points at the detail page for its own id. */
+/* Every card sitewide links to the product's own slug URL, e.g.
+   /banarasi-kora-zari-silk-saree — see rk_product_url() below and the rewrite
+   rule in .htaccess. */
 foreach ($shop_products as $i => $p) {
-    $shop_products[$i]['link'] = 'product-details.php?id=' . $p['id'];
+    $shop_products[$i]['link'] = rk_product_url($p);
 }
 
 /**
  * Look a product up by its id. Returns null when the id is unknown.
  */
+/**
+ * URL slug for a product, built from its title: "Banarasi Kora Zari Silk
+ * Saree" becomes "banarasi-kora-zari-silk-saree".
+ */
+function rk_product_slug(array $product)
+{
+    return rk_slugify($product['title']);
+}
+
+/**
+ * The public URL for a product. Accepts a product row or a bare id.
+ *
+ * Deliberately a single flat segment ("banarasi-kora-zari-silk-saree" rather
+ * than "saree/banarasi-..."): every link, stylesheet and image path in this
+ * codebase is relative, and a nested path would change the directory the
+ * browser resolves them against and break all of them.
+ */
+function rk_product_url($product)
+{
+    if (!is_array($product)) {
+        $product = rk_find_product(isset($GLOBALS['shop_products']) ? $GLOBALS['shop_products'] : [], $product);
+    }
+    return $product ? rk_product_slug($product) : 'shop.php';
+}
+
+function rk_find_product_by_slug(array $products, $slug)
+{
+    $slug = rk_slugify($slug);
+    foreach ($products as $product) {
+        if (rk_product_slug($product) === $slug) {
+            return $product;
+        }
+    }
+    return null;
+}
+
 function rk_find_product(array $products, $id)
 {
     foreach ($products as $product) {

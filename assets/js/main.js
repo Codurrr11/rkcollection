@@ -331,15 +331,25 @@
             $(this).toggleClass('is-active');
         });
 
-        // Add to cart button click handler
+        // Add to cart — the button carries a label now, so confirm in words
+        // rather than with a scale pop that would fight its hover lift.
         $(document).on('click', '.js-add-cart', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            var btn = $(this);
-            btn.css('transform', 'scale(1.3)');
+
+            var btn   = $(this);
+            var label = btn.find('span');
+
+            if (btn.hasClass('is-added')) { return; }
+
+            var original = label.text();
+            btn.addClass('is-added');
+            label.text('Added to Cart');
+
             setTimeout(function () {
-                btn.css('transform', '');
-            }, 200);
+                btn.removeClass('is-added');
+                label.text(original);
+            }, 1500);
         });
     }
 

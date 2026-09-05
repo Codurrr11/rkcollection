@@ -1,0 +1,35 @@
+# Disable directory indexing
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Prevent direct access to hidden files and includes folder
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule (^|/)includes/ - [F,L]
+
+    # Block direct browser directory browsing of assets folder
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^.*/assets/?$ [NC]
+    RewriteRule ^ - [F,L]
+
+    # Hide .php extension: maps /page to /page.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+    # Pretty journal URLs: /journal-the-sacred-art-of-kadwa-weaving-in-pure-gold-zari
+    # Matched before the product rule so an article is never resolved as a saree.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^journal-([a-z0-9-]+)$ blog-details.php?slug=$1 [QSA,L]
+
+    # Pretty product URLs: /banarasi-kora-zari-silk-saree
+    # Runs only after the rule above, so a real page always wins the name.
+    # A single lowercase segment that matches no file is treated as a saree
+    # slug and resolved by product-details.php.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^([a-z0-9][a-z0-9-]*)$ product-details.php?slug=$1 [QSA,L]
+</IfModule>

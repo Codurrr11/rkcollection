@@ -1,0 +1,20 @@
+# RK ADMIN
+# UI scaffold only — no authentication yet. Add an auth gate before this
+# directory is reachable on a public host.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Includes are partials, never a page: block direct hits
+    RewriteRule (^|/)includes/ - [F,L]
+
+    # No direct access to dotfiles
+    RewriteRule (^|/)\. - [F,L]
+</IfModule>
+
+# Keep the admin out of search results even if it is reachable
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
